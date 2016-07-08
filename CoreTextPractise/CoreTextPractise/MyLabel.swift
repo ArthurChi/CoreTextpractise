@@ -58,7 +58,9 @@ class MyLabel: UILabel {
                 var runRect = CGRectZero
                 runRect.size.width = CGFloat(CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, nil))
                 
-                runRect = CGRect(x: lineOrigin.x + CTLineGetOffsetForStringIndex(line, CTRunGetStringRange(run).location, nil), y: lineOrigin.y - runDescent, width: runRect.size.width, height: runAscent - runDescent)
+                let strRangeLocation = CTRunGetStringRange(run).location
+                
+                runRect = CGRect(x: lineOrigin.x + CTLineGetOffsetForStringIndex(line, strRangeLocation, nil), y: lineOrigin.y - runDescent, width: runRect.size.width, height: runAscent - runDescent)
                 
                 let imageName = (attributes as Dictionary)["badge_new"]
                 
@@ -121,5 +123,38 @@ class MyLabel: UILabel {
         
     }
     
-    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        let touch = touches.first
+        var location = touch?.locationInView(self) ?? CGPointZero
+        
+        let lines = CTFrameGetLines(frameAttr) as Array
+        let origins = UnsafeMutablePointer<CGPoint>([CFArrayGetCount(lines)])
+        
+        CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), origins)
+        
+        var line: CTLine!
+        var lineOrigin = CGPointZero
+        
+        for i in 0..<lines.count {
+            
+            let origin = origins[i]
+            let path = CTFrameGetPath(frameAttr)
+            let rect = CGPathGetBoundingBox(path)
+            let y = rect.origin.y + rect.size.height - origin.y
+            
+            if location.y <= y && location.x >= origin.x {
+                line = lines[i] as! CTLine
+                lineOrigin = origin
+                break
+            }
+        }
+        
+        location.x -= lineOrigin.x
+        let index = CTLineGetStringIndexForPosition(line, location)
+        
+        if index >= 1 && index <= 10 {
+            print(123)
+        }
+    }
 }
