@@ -148,18 +148,14 @@ class MyLabel: UILabel {
         // TODO: - 换行模式, 段落模式
     }
     
+    // 主要思想就是通过你点击的手指的point和你要找的string的范围做比较
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         let touch = touches.first
         var location = touch?.locationInView(self) ?? CGPointZero
         
-//        print(unsafeAddressOf(frameAttr))
-        
         let lines = CTFrameGetLines(frameAttr) as Array
-        
-//        print(unsafeAddressOf(lines))
-        var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero) //UnsafeMutablePointer<CGPoint>()
-        
+        var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)
         CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), &origins)
         
         var line: CTLine?
@@ -173,7 +169,7 @@ class MyLabel: UILabel {
             let y = rect.origin.y + rect.size.height - origin.y
             
             if location.y <= y && location.x >= origin.x {
-                line = lines[i] as! CTLine
+                line = (lines[i] as! CTLine)
                 lineOrigin = origin
                 break
             }
@@ -183,10 +179,9 @@ class MyLabel: UILabel {
         
         if let line = line {
             
+            // 通过点和行数来取字的索引
             let index = CTLineGetStringIndexForPosition(line, location)
-            
-//            print(origins)
-            
+            // 这里是硬编码, 限定了10个字符长度
             if index >= 1 && index <= 10 {
                 print(123)
             }
