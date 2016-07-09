@@ -31,12 +31,11 @@ class MyLabel: UILabel {
         CTFrameDraw(frameAttr, context!)
         
         let lines = CTFrameGetLines(frameAttr) as Array
-        let lineOrigins = UnsafeMutablePointer<CGPoint>([CFArrayGetCount(lines)])  //Array<CGPoint>()//[CFArrayGetCount(lines)]
-//        var lineOrigins1 = Array<CGPoint>.init(count: CFArrayGetCount(lines), repeatedValue: CGPointZero)
+        var lineOrigins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)
         
-        CTFrameGetLineOrigins(frameAttr, CFRange(location: 0, length: 0), lineOrigins) // UnsafeMutablePointer<CGPoint>(lineOrigins)
+        CTFrameGetLineOrigins(frameAttr, CFRange(location: 0, length: 0), &lineOrigins)
         
-        for i in 0..<CFArrayGetCount(lines) {
+        for i in 0..<lines.count {
             
             var lineAscent: CGFloat = 0, lineDescent: CGFloat = 0, lineLeading: CGFloat = 0
             let line = lines[i] as! CTLine
@@ -47,9 +46,8 @@ class MyLabel: UILabel {
             for j in 0..<runs.count {
                 
                 var runAscent: CGFloat = 0, runDescent: CGFloat = 0
-//                let lineOrigin = lineOrigins[j] as! CGPoint
                 
-                let lineOrigin = lineOrigins[j]
+                let lineOrigin = lineOrigins[i]
                 
                 let run = runs[j] as! CTRun
                 
@@ -128,12 +126,16 @@ class MyLabel: UILabel {
         let touch = touches.first
         var location = touch?.locationInView(self) ?? CGPointZero
         
+//        print(unsafeAddressOf(frameAttr))
+        
         let lines = CTFrameGetLines(frameAttr) as Array
-        let origins = UnsafeMutablePointer<CGPoint>([CFArrayGetCount(lines)])
         
-        CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), origins)
+        print(unsafeAddressOf(lines))
+        var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero) //UnsafeMutablePointer<CGPoint>()
         
-        var line: CTLine!
+        CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), &origins)
+        
+        var line: CTLine?
         var lineOrigin = CGPointZero
         
         for i in 0..<lines.count {
@@ -151,10 +153,18 @@ class MyLabel: UILabel {
         }
         
         location.x -= lineOrigin.x
-        let index = CTLineGetStringIndexForPosition(line, location)
         
-        if index >= 1 && index <= 10 {
-            print(123)
+        if let line = line {
+            
+            let index = CTLineGetStringIndexForPosition(line, location)
+            
+            print(origins)
+            
+            if index >= 1 && index <= 10 {
+                print(123)
+            }
         }
+        
+        
     }
 }
