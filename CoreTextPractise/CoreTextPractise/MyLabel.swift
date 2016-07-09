@@ -9,35 +9,68 @@
 import UIKit
 
 class MyLabel: UILabel {
-
-    lazy var content = NSMutableAttributedString(string: "这是一个测试文字, 来个图片, 还有点击事件, 多复制一些, 看看折行效果, cpoy1: 这是一个测试文字, 来个图片, 还有点击事件, cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
+    
     var frameAttr: CTFrame!
+    var imgName = "badge_new"
+    lazy var content = NSMutableAttributedString()
     
     override func drawRect(rect: CGRect) {
         
-        buildAttributeStirng()
+        if let contentAttr = attributedText {
+            content.appendAttributedString(contentAttr)
+        }
+        
+        build()
         
         let context = UIGraphicsGetCurrentContext()
+        
+        // 可以理解为 - 要旋转画布了
         CGContextSaveGState(context)
+        
+        // 旋转画布
         CGContextSetTextMatrix(context, CGAffineTransformIdentity)
         CGContextTranslateCTM(context, 0, rect.size.height)
         CGContextScaleCTM(context, 1.0, -1.0)
         
-        let frameSetter = CTFramesetterCreateWithAttributedString(content as CFAttributedStringRef)
+        /*
+         * 1. 通过AttributeString->CTFramesetter
+         * 2. 创建路径, 你可以做点形变, 可以修改渲染的路径
+         * 3. 通过以上两个对象, 创建CTFrame
+         * 4. 将CTFrame对象渲染上去
+         */
+        
+        let frameSetter = CTFramesetterCreateWithAttributedString(content as CFAttributedString)
+        
         let path = CGPathCreateMutable()
         CGPathAddRect(path, nil, CGRect(x: 0, y: 0, width: rect.size.width, height: rect.size.height))
         
         frameAttr = CTFramesetterCreateFrame(frameSetter, CFRange(location: 0, length: content.length), path, nil)
+        
         CTFrameDraw(frameAttr, context!)
+        // 属性文字渲染完毕
+        
+        // 这里要理解一个模型, CTFrame包含CTLine, CTLine包含CTRun
+        
+        /*
+         * 1. 从CTFrame中获取所有的CTLine
+         * 2. 建立一个CGPoint的数组, 用来存放没个CTLine的原点
+         * 3. 遍历所有的CTLine
+         * 4. 遍历当前CTLine中的CTRun
+         * 5. 从CTRun中获取属性字典中的值(这里需要知道CTRun是什么)
+         * 6. 找到后, 用Core Graphics画上去
+         */
         
         let lines = CTFrameGetLines(frameAttr) as Array
         var lineOrigins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)
-        
         CTFrameGetLineOrigins(frameAttr, CFRange(location: 0, length: 0), &lineOrigins)
         
         for i in 0..<lines.count {
             
-            var lineAscent: CGFloat = 0, lineDescent: CGFloat = 0, lineLeading: CGFloat = 0
+            var
+            lineAscent = CGFloat(),
+            lineDescent = CGFloat(),
+            lineLeading = CGFloat()
+            
             let line = lines[i] as! CTLine
             CTLineGetTypographicBounds(line, &lineAscent, &lineDescent, &lineLeading)
             
@@ -45,23 +78,27 @@ class MyLabel: UILabel {
             
             for j in 0..<runs.count {
                 
-                var runAscent: CGFloat = 0, runDescent: CGFloat = 0
-                
-                let lineOrigin = lineOrigins[i]
+                var
+                runAscent = CGFloat(),
+                runDescent = CGFloat()
                 
                 let run = runs[j] as! CTRun
-                
-                let attributes = CTRunGetAttributes(run)
                 
                 var runRect = CGRectZero
                 runRect.size.width = CGFloat(CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, nil))
                 
+                // 获取当前CTRun的Range, 用来控制画图所用的X
                 let strRangeLocation = CTRunGetStringRange(run).location
-                
+                // 获取当前CTLine的原点, 用来控制画图所用的Y
+                let lineOrigin = lineOrigins[i]
+                // 算出绘图所需的Rect
                 runRect = CGRect(x: lineOrigin.x + CTLineGetOffsetForStringIndex(line, strRangeLocation, nil), y: lineOrigin.y - runDescent, width: runRect.size.width, height: runAscent - runDescent)
                 
-                let imageName = (attributes as Dictionary)["badge_new"]
+                // 这里是要取出刚才你起的attribute的名字
+                let attributes = CTRunGetAttributes(run)
+                let imageName = (attributes as Dictionary)[imgName]
                 
+                // 生成Image并渲染
                 if let imageName = imageName as? String {
                     if let image = UIImage(named: imageName) {
                         
@@ -71,54 +108,44 @@ class MyLabel: UILabel {
                         imageDrawRect.origin.y = lineOrigin.y
                         CGContextDrawImage(context, imageDrawRect, image.CGImage)
                     }
-                    
                 }
                 
             }
         }
         
+        // 把刚旋转的画布转回来
         CGContextRestoreGState(context)
     }
     
-    private func buildAttributeStirng() {
+    private func build() {
         
-        var imgName = "badge_new"
-        
-        /// 销毁内存
-        let runDelegateDeallocCallback: CTRunDelegateDeallocateCallback = { pointer in
+        // 声明代理回调, 决定描述图片的大小
+        var imageCallback = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1, dealloc: { (pointer) in
             
+            }, getAscent: { (pointer) -> CGFloat in
+                return 30
+            }, getDescent: { (pointer) -> CGFloat in
+                return 0
+            }) { (pointer) -> CGFloat in
+                return 30
         }
         
-        /// CTRun回调, 获取高度
-        let runDelegateGetAscentCallback: CTRunDelegateGetAscentCallback = { pointer in
-            return 30
-        }
+        // 创建CTRun回调
+        let runDelegate = CTRunDelegateCreate(&imageCallback, &imgName)
         
-        let runDelegateGetDescentCallback: CTRunDelegateGetDescentCallback = { pointer in
-            return 0
-        }
-        
-        /// CTRun回调, 获取宽度
-        let runDelegateGetWidthCallback: CTRunDelegateGetWidthCallback = { pointer in
-            return 30
-        }
-        
-        var imageCallbacks = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1, dealloc: runDelegateDeallocCallback, getAscent: runDelegateGetAscentCallback, getDescent: runDelegateGetDescentCallback, getWidth: runDelegateGetWidthCallback)
-        
-        /// 创建CTRun回调
-        let runDelegate = CTRunDelegateCreate(&imageCallbacks, &imgName)
-        
+        // 为要画的图片留一个占位符
         let imageAttributedString = NSMutableAttributedString(string: " ")
+        // 有这行, 才会在绘制的时候, 调用代理, 留下代理中的rect
         imageAttributedString.addAttribute(kCTRunDelegateAttributeName as String, value: runDelegate!, range: NSRange(location: 0,length: 1))
-        
+        // 存下你的图片名或URL
         imageAttributedString.addAttribute(imgName, value: imgName, range: NSRange(location: 0, length: 1))
+        
         content.appendAttributedString(imageAttributedString)
         
-        let lastedAttributedString = NSMutableAttributedString(string: "cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
+        let lastedAttributedString = NSMutableAttributedString(string: "123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
         content.appendAttributedString(lastedAttributedString)
         
         // TODO: - 换行模式, 段落模式
-        
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -130,7 +157,7 @@ class MyLabel: UILabel {
         
         let lines = CTFrameGetLines(frameAttr) as Array
         
-        print(unsafeAddressOf(lines))
+//        print(unsafeAddressOf(lines))
         var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero) //UnsafeMutablePointer<CGPoint>()
         
         CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), &origins)
@@ -158,7 +185,7 @@ class MyLabel: UILabel {
             
             let index = CTLineGetStringIndexForPosition(line, location)
             
-            print(origins)
+//            print(origins)
             
             if index >= 1 && index <= 10 {
                 print(123)

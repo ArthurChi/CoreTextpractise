@@ -14,13 +14,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
         
-//        showLabel.setNeedsDisplay()
+        let attrbuteStr = NSMutableAttributedString(string: "这是一个测试文字, 来个图片, 还有点击事件, 多复制一些, 看看折行效果, cpoy1: 这是一个测试文字, 来个图片, 还有点击事件, cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
+        
+        showLabel.attributedText = attrbuteStr
     }
 }
 
