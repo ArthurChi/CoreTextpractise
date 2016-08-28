@@ -12,6 +12,7 @@ class MyLabel: UILabel {
     
     var frameAttr: CTFrame!
     var imgName = "badge_new"
+    let kClickeableAttributeString = "ClickeableAttributeString"
     lazy var content = NSMutableAttributedString()
     
     override func drawRect(rect: CGRect) {
@@ -131,7 +132,7 @@ class MyLabel: UILabel {
         }
         
         // 创建CTRun回调
-        let runDelegate = CTRunDelegateCreate(&imageCallback, &imgName)
+        let runDelegate = CTRunDelegateCreate(&imageCallback, nil)
         
         // 为要画的图片留一个占位符
         let imageAttributedString = NSMutableAttributedString(string: " ")
@@ -145,6 +146,15 @@ class MyLabel: UILabel {
         let lastedAttributedString = NSMutableAttributedString(string: "123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
         content.appendAttributedString(lastedAttributedString)
         
+        let clickeableString = NSMutableAttributedString(string: "这段文字可点击")
+        clickeableString.addAttributes([NSForegroundColorAttributeName: UIColor.greenColor()], range: NSRange(location: 0, length: clickeableString.length))
+        
+        let action = Action { 
+            print("WTF")
+        }
+        
+        clickeableString.addAttribute(kClickeableAttributeString, value: action, range: NSRange(location: 0, length: clickeableString.length))
+        content.appendAttributedString(clickeableString)
         // TODO: - 换行模式, 段落模式
     }
     
@@ -179,14 +189,37 @@ class MyLabel: UILabel {
         
         if let line = line {
             
-            // 通过点和行数来取字的索引
-            let index = CTLineGetStringIndexForPosition(line, location)
-            // 这里是硬编码, 限定了10个字符长度
-            if index >= 1 && index <= 10 {
-                print(123)
+            // 模拟YYText可点击文字
+            let runs = CTLineGetGlyphRuns(line) as Array
+            
+            for j in 0..<runs.count {
+                
+                let run = runs[j] as! CTRun
+                
+                // 这里是要取出刚才你起的attribute的名字
+                let attributes = CTRunGetAttributes(run)
+                if let action = (attributes as Dictionary)[kClickeableAttributeString] as? Action {
+                    
+                    action.callback()
+                }
             }
+            
+//            // 通过点和行数来取字的索引
+//            let index = CTLineGetStringIndexForPosition(line, location)
+//            // 这里是硬编码, 限定了10个字符长度
+//            if index >= 1 && index <= 10 {
+//                print(123)
+//            }
         }
-        
-        
+    }
+}
+
+class Action: NSObject {
+    
+    var callback: () -> Void
+    
+    init(callback: (()->Void)) {
+        self.callback = callback
+        super.init()
     }
 }
