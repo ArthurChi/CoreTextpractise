@@ -150,11 +150,12 @@ class MyLabel: UILabel {
         clickeableString.addAttributes([NSForegroundColorAttributeName: UIColor.greenColor()], range: NSRange(location: 0, length: clickeableString.length))
         
         let action = Action { 
-            print("WTF")
+            print(NSDate() ,"WTF")
         }
         
         clickeableString.addAttribute(kClickeableAttributeString, value: action, range: NSRange(location: 0, length: clickeableString.length))
         content.appendAttributedString(clickeableString)
+        
         // TODO: - 换行模式, 段落模式
     }
     
@@ -199,17 +200,16 @@ class MyLabel: UILabel {
                 // 这里是要取出刚才你起的attribute的名字
                 let attributes = CTRunGetAttributes(run)
                 if let action = (attributes as Dictionary)[kClickeableAttributeString] as? Action {
+                    let index = CTLineGetStringIndexForPosition(line, location)
                     
-                    action.callback()
+                    let strLocation = CTRunGetStringRange(run).location
+                    let strLength = CTRunGetStringRange(run).length
+                    
+                    if index >= strLocation && index <= strLocation + strLength {
+                        action.callback()
+                    }
                 }
             }
-            
-//            // 通过点和行数来取字的索引
-//            let index = CTLineGetStringIndexForPosition(line, location)
-//            // 这里是硬编码, 限定了10个字符长度
-//            if index >= 1 && index <= 10 {
-//                print(123)
-//            }
         }
     }
 }
