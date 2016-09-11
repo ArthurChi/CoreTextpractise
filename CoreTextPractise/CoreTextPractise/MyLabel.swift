@@ -143,6 +143,8 @@ class MyLabel: UILabel {
         
         content.appendAttributedString(imageAttributedString)
         
+        
+        
         let lastedAttributedString = NSMutableAttributedString(string: "123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
         content.appendAttributedString(lastedAttributedString)
         

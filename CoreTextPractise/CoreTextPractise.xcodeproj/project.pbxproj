@@ -13,6 +13,7 @@
 		2A00E2411D2DEAE000ACFF52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A00E2401D2DEAE000ACFF52 /* Assets.xcassets */; };
 		2A00E2441D2DEAE000ACFF52 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A00E2421D2DEAE000ACFF52 /* LaunchScreen.storyboard */; };
 		2A00E24C1D2DEB4400ACFF52 /* MyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00E24B1D2DEB4400ACFF52 /* MyLabel.swift */; };
+		2A52D3211D82A3F600E34706 /* MyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A52D3201D82A3F600E34706 /* MyTextView.swift */; };
 		2A8DC1C51D2F82FC00B33FC4 /* ClickLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		2A00E2431D2DEAE000ACFF52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2A00E2451D2DEAE000ACFF52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2A00E24B1D2DEB4400ACFF52 /* MyLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyLabel.swift; sourceTree = "<group>"; };
+		2A52D3201D82A3F600E34706 /* MyTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyTextView.swift; sourceTree = "<group>"; };
 		2A8DC1C21D2F82FB00B33FC4 /* CoreTextPractise-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoreTextPractise-Bridging-Header.h"; sourceTree = "<group>"; };
 		2A8DC1C31D2F82FC00B33FC4 /* ClickLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClickLabel.h; sourceTree = "<group>"; };
 		2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClickLabel.m; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				2A8DC1C31D2F82FC00B33FC4 /* ClickLabel.h */,
 				2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */,
 				2A8DC1C21D2F82FB00B33FC4 /* CoreTextPractise-Bridging-Header.h */,
+				2A52D3201D82A3F600E34706 /* MyTextView.swift */,
 			);
 			path = CoreTextPractise;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				2A8DC1C51D2F82FC00B33FC4 /* ClickLabel.m in Sources */,
 				2A00E23A1D2DEAE000ACFF52 /* AppDelegate.swift in Sources */,
 				2A00E24C1D2DEB4400ACFF52 /* MyLabel.swift in Sources */,
+				2A52D3211D82A3F600E34706 /* MyTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
