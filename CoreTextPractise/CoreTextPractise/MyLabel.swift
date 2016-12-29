@@ -15,10 +15,10 @@ class MyLabel: UILabel {
     let kClickeableAttributeString = "ClickeableAttributeString"
     lazy var content = NSMutableAttributedString()
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         
         if let contentAttr = attributedText {
-            content.appendAttributedString(contentAttr)
+            content.append(contentAttr)
         }
         
         build()
@@ -26,12 +26,12 @@ class MyLabel: UILabel {
         let context = UIGraphicsGetCurrentContext()
         
         // 可以理解为 - 要旋转画布了
-        CGContextSaveGState(context)
+        context?.saveGState()
         
         // 旋转画布
-        CGContextSetTextMatrix(context, CGAffineTransformIdentity)
-        CGContextTranslateCTM(context, 0, rect.size.height)
-        CGContextScaleCTM(context, 1.0, -1.0)
+        context!.textMatrix = CGAffineTransform.identity
+        context?.translateBy(x: 0, y: rect.size.height)
+        context?.scaleBy(x: 1.0, y: -1.0)
         
         /*
          * 1. 通过AttributeString->CTFramesetter
@@ -42,12 +42,20 @@ class MyLabel: UILabel {
         
         let frameSetter = CTFramesetterCreateWithAttributedString(content as CFAttributedString)
         
-        let path = CGPathCreateMutable()
-        CGPathAddRect(path, nil, CGRect(x: 0, y: 0, width: rect.size.width, height: rect.size.height))
+        let path = CGMutablePath()
+        let bezierPath = UIBezierPath(ovalIn: CGRect(x: 50, y: UIScreen.main.bounds.size.height - 250, width: 100, height: 200))
+        path.addRect(bounds)
+        
+        // 比如, 要在这里加一个椭圆. 然后可以在这个区域画一个图片.
+        path.addPath(bezierPath.cgPath)
         
         frameAttr = CTFramesetterCreateFrame(frameSetter, CFRange(location: 0, length: content.length), path, nil)
         
         CTFrameDraw(frameAttr, context!)
+        
+        
+        
+        
         // 属性文字渲染完毕
         
         // 这里要理解一个模型, CTFrame包含CTLine, CTLine包含CTRun
@@ -62,7 +70,7 @@ class MyLabel: UILabel {
          */
         
         let lines = CTFrameGetLines(frameAttr) as Array
-        var lineOrigins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)
+        var lineOrigins = [CGPoint](repeating: CGPoint.zero, count: lines.count)
         CTFrameGetLineOrigins(frameAttr, CFRange(location: 0, length: 0), &lineOrigins)
         
         for i in 0..<lines.count {
@@ -85,7 +93,7 @@ class MyLabel: UILabel {
                 
                 let run = runs[j] as! CTRun
                 
-                var runRect = CGRectZero
+                var runRect = CGRect.zero
                 runRect.size.width = CGFloat(CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, nil))
                 
                 // 获取当前CTRun的Range, 用来控制画图所用的X
@@ -97,17 +105,17 @@ class MyLabel: UILabel {
                 
                 // 这里是要取出刚才你起的attribute的名字
                 let attributes = CTRunGetAttributes(run)
-                let imageName = (attributes as Dictionary)[imgName]
+                let imageName = (attributes as NSDictionary)[imgName]
                 
                 // 生成Image并渲染
                 if let imageName = imageName as? String {
                     if let image = UIImage(named: imageName) {
                         
-                        var imageDrawRect = CGRectZero
+                        var imageDrawRect = CGRect.zero
                         imageDrawRect.size = CGSize(width: 30, height: 30)
                         imageDrawRect.origin.x = runRect.origin.x + lineOrigin.x
                         imageDrawRect.origin.y = lineOrigin.y
-                        CGContextDrawImage(context, imageDrawRect, image.CGImage)
+                        context?.draw(image.cgImage!, in: imageDrawRect)
                     }
                 }
                 
@@ -115,10 +123,10 @@ class MyLabel: UILabel {
         }
         
         // 把刚旋转的画布转回来
-        CGContextRestoreGState(context)
+        context?.restoreGState()
     }
     
-    private func build() {
+    fileprivate func build() {
         
         // 声明代理回调, 决定描述图片的大小
         var imageCallback = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1, dealloc: { (pointer) in
@@ -141,44 +149,50 @@ class MyLabel: UILabel {
         // 存下你的图片名或URL
         imageAttributedString.addAttribute(imgName, value: imgName, range: NSRange(location: 0, length: 1))
         
-        content.appendAttributedString(imageAttributedString)
+        content.append(imageAttributedString)
+        
+        let action1 = Action {
+            print(Date(), "WHAT")
+        }
+        
+        let lastedAttributedString = NSMutableAttributedString(string: "123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是")
+        lastedAttributedString.addAttribute(kClickeableAttributeString, value: action1, range: NSRange(location: 0, length: lastedAttributedString.length))
         
         
         
-        let lastedAttributedString = NSMutableAttributedString(string: "123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件")
-        content.appendAttributedString(lastedAttributedString)
+        content.append(lastedAttributedString)
         
         let clickeableString = NSMutableAttributedString(string: "这段文字可点击")
-        clickeableString.addAttributes([NSForegroundColorAttributeName: UIColor.greenColor()], range: NSRange(location: 0, length: clickeableString.length))
+        clickeableString.addAttributes([NSForegroundColorAttributeName: UIColor.green], range: NSRange(location: 0, length: clickeableString.length))
         
         let action = Action { 
-            print(NSDate() ,"WTF")
+            print(Date() ,"WTF")
         }
         
         clickeableString.addAttribute(kClickeableAttributeString, value: action, range: NSRange(location: 0, length: clickeableString.length))
-        content.appendAttributedString(clickeableString)
+        content.append(clickeableString)
         
         // TODO: - 换行模式, 段落模式
     }
     
     // 主要思想就是通过你点击的手指的point和你要找的string的范围做比较
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         let touch = touches.first
-        var location = touch?.locationInView(self) ?? CGPointZero
+        var location = touch?.location(in: self) ?? CGPoint.zero
         
         let lines = CTFrameGetLines(frameAttr) as Array
-        var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)
+        var origins = [CGPoint](repeating: CGPoint.zero, count: lines.count)
         CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), &origins)
         
         var line: CTLine?
-        var lineOrigin = CGPointZero
+        var lineOrigin = CGPoint.zero
         
         for i in 0..<lines.count {
             
             let origin = origins[i]
             let path = CTFrameGetPath(frameAttr)
-            let rect = CGPathGetBoundingBox(path)
+            let rect = path.boundingBox
             let y = rect.origin.y + rect.size.height - origin.y
             
             if location.y <= y && location.x >= origin.x {
@@ -200,10 +214,9 @@ class MyLabel: UILabel {
                 let run = runs[j] as! CTRun
                 
                 // 这里是要取出刚才你起的attribute的名字
-                let attributes = CTRunGetAttributes(run)
-                if let action = (attributes as Dictionary)[kClickeableAttributeString] as? Action {
+                let attributes = CTRunGetAttributes(run) as NSDictionary
+                if let action = attributes[kClickeableAttributeString] as? Action {
                     let index = CTLineGetStringIndexForPosition(line, location)
-                    
                     let strLocation = CTRunGetStringRange(run).location
                     let strLength = CTRunGetStringRange(run).length
                     
@@ -220,7 +233,7 @@ class Action: NSObject {
     
     var callback: () -> Void
     
-    init(callback: (()->Void)) {
+    init(callback: @escaping (()->Void)) {
         self.callback = callback
         super.init()
     }

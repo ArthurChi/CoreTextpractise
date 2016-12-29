@@ -13,10 +13,10 @@ let TextBindingAttributeName = "TextBindingAttributeName"
 class MyTextView: UITextView {
 
     
-    private var delConform = false
-    private var preSelecteRanget = NSRange()
+    fileprivate var delConform = false
+    fileprivate var preSelecteRanget = NSRange()
     
-    private var regex: NSRegularExpression!
+    fileprivate var regex: NSRegularExpression!
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -24,48 +24,48 @@ class MyTextView: UITextView {
         // setup regex
         let pattern = "[-_a-zA-Z@\\.]+[ ,\\n]"
         do {
-            try regex = NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions.CaseInsensitive)
+            try regex = NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
         } catch {}
     }
     
-    override func insertText(text: String) {
+    override func insertText(_ text: String) {
         
-        let startPosition = positionFromPosition(beginningOfDocument, offset: selectedRange.location)
-        let endPostion = positionFromPosition(beginningOfDocument, offset: selectedRange.location + selectedRange.length)
+        let startPosition = position(from: beginningOfDocument, offset: selectedRange.location)
+        let endPostion = position(from: beginningOfDocument, offset: selectedRange.location + selectedRange.length)
         
-        let textRange = textRangeFromPosition(startPosition!, toPosition: endPostion!)
+        let textRange = self.textRange(from: startPosition!, to: endPostion!)
         
-        replaceRange(textRange!, withText: text)
+        replace(textRange!, withText: text)
     }
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MyTextView.textDidChanged(_:)), name: UITextViewTextDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MyTextView.textDidChanged(_:)), name: NSNotification.Name.UITextViewTextDidChange, object: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MyTextView.textDidChanged(_:)), name: UITextViewTextDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MyTextView.textDidChanged(_:)), name: NSNotification.Name.UITextViewTextDidChange, object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    @objc private func textDidChanged(notification: NSNotification) {
+    @objc fileprivate func textDidChanged(_ notification: Notification) {
         
         delConform = false
         
-        let strAllRange = NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
+        let strAllRange = NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytes(using: String.Encoding.utf8))
         
         let attrStr = NSMutableAttributedString(attributedString: self.attributedText)
         attrStr.removeAttribute(NSForegroundColorAttributeName, range: strAllRange)
         attrStr.removeAttribute(TextBindingAttributeName, range: strAllRange)
         attrStr.removeAttribute(NSBackgroundColorAttributeName, range: strAllRange)
         
-        regex.enumerateMatchesInString(self.attributedText.string, options: NSMatchingOptions.WithoutAnchoringBounds, range: NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))) { (result, flags, stop) in
+        regex.enumerateMatches(in: self.attributedText.string, options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytes(using: String.Encoding.utf8))) { (result, flags, stop) in
             
             guard let result = result else {
                 return
@@ -76,7 +76,7 @@ class MyTextView: UITextView {
                 return
             }
             
-            attrStr.addAttributes([NSForegroundColorAttributeName: UIColor.blueColor()], range: range)
+            attrStr.addAttributes([NSForegroundColorAttributeName: UIColor.blue], range: range)
             attrStr.addAttributes([TextBindingAttributeName: TextBinding.init(delConfirm: true)], range: range)
         }
         
@@ -85,12 +85,12 @@ class MyTextView: UITextView {
     
     override func deleteBackward() {
         
-        if !hasText() {
+        if !hasText {
             return
         }
         
         var effectiveRange = NSRange.init()//: NSRangePointer = nil
-        let binding = self.attributedText.attribute(TextBindingAttributeName, atIndex: selectedRange.location - 1, longestEffectiveRange: &effectiveRange, inRange: NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)))
+        let binding = self.attributedText.attribute(TextBindingAttributeName, at: selectedRange.location - 1, longestEffectiveRange: &effectiveRange, in: NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytes(using: String.Encoding.utf8)))
         
         if binding == nil {
             super.deleteBackward()
@@ -101,13 +101,13 @@ class MyTextView: UITextView {
             if !self.delConform {
                 self.delConform = true
                 
-                attrbuteString.addAttributes([NSBackgroundColorAttributeName: UIColor.yellowColor()], range: effectiveRange)
+                attrbuteString.addAttributes([NSBackgroundColorAttributeName: UIColor.yellow], range: effectiveRange)
                 
             } else {
                 
                 self.delConform = false
                 attrbuteString.removeAttribute(NSBackgroundColorAttributeName, range: effectiveRange)
-                attrbuteString.replaceCharactersInRange(effectiveRange, withString: "")
+                attrbuteString.replaceCharacters(in: effectiveRange, with: "")
                 
                 
                 preSelecteRanget = effectiveRange

@@ -14,7 +14,6 @@
 		2A00E2441D2DEAE000ACFF52 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A00E2421D2DEAE000ACFF52 /* LaunchScreen.storyboard */; };
 		2A00E24C1D2DEB4400ACFF52 /* MyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00E24B1D2DEB4400ACFF52 /* MyLabel.swift */; };
 		2A52D3211D82A3F600E34706 /* MyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A52D3201D82A3F600E34706 /* MyTextView.swift */; };
-		2A8DC1C51D2F82FC00B33FC4 /* ClickLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +27,6 @@
 		2A00E24B1D2DEB4400ACFF52 /* MyLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyLabel.swift; sourceTree = "<group>"; };
 		2A52D3201D82A3F600E34706 /* MyTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyTextView.swift; sourceTree = "<group>"; };
 		2A8DC1C21D2F82FB00B33FC4 /* CoreTextPractise-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoreTextPractise-Bridging-Header.h"; sourceTree = "<group>"; };
-		2A8DC1C31D2F82FC00B33FC4 /* ClickLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClickLabel.h; sourceTree = "<group>"; };
-		2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClickLabel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,8 +66,6 @@
 				2A00E2421D2DEAE000ACFF52 /* LaunchScreen.storyboard */,
 				2A00E2451D2DEAE000ACFF52 /* Info.plist */,
 				2A00E24B1D2DEB4400ACFF52 /* MyLabel.swift */,
-				2A8DC1C31D2F82FC00B33FC4 /* ClickLabel.h */,
-				2A8DC1C41D2F82FC00B33FC4 /* ClickLabel.m */,
 				2A8DC1C21D2F82FB00B33FC4 /* CoreTextPractise-Bridging-Header.h */,
 				2A52D3201D82A3F600E34706 /* MyTextView.swift */,
 			);
@@ -104,11 +99,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Vread;
 				TargetAttributes = {
 					2A00E2351D2DEAE000ACFF52 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -149,7 +145,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A00E23C1D2DEAE000ACFF52 /* ViewController.swift in Sources */,
-				2A8DC1C51D2F82FC00B33FC4 /* ClickLabel.m in Sources */,
 				2A00E23A1D2DEAE000ACFF52 /* AppDelegate.swift in Sources */,
 				2A00E24C1D2DEB4400ACFF52 /* MyLabel.swift in Sources */,
 				2A52D3211D82A3F600E34706 /* MyTextView.swift in Sources */,
@@ -192,8 +187,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -237,8 +234,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -257,6 +256,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -272,6 +272,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoreTextPractise/CoreTextPractise-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -285,6 +286,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vread.CoreTextPractise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "CoreTextPractise/CoreTextPractise-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
