@@ -104,6 +104,7 @@
 				TargetAttributes = {
 					2A00E2351D2DEAE000ACFF52 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 266Y8BZ99E;
 						LastSwiftMigration = 0820;
 					};
 				};
@@ -266,6 +267,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 266Y8BZ99E;
 				INFOPLIST_FILE = CoreTextPractise/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vread.CoreTextPractise;
@@ -281,6 +283,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 266Y8BZ99E;
 				INFOPLIST_FILE = CoreTextPractise/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vread.CoreTextPractise;

@@ -21,23 +21,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CRu-mM-1LU" customClass="MyLabel" customModule="CoreTextPractise" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DTo-v6-vzd">
+                                <rect key="frame" x="0.0" y="20" width="375" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fZK-9D-emK">
+                                <rect key="frame" x="0.0" y="41" width="375" height="626"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="CRu-mM-1LU" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="C45-JL-30w"/>
-                            <constraint firstItem="CRu-mM-1LU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="C8c-yP-cMR"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="CRu-mM-1LU" secondAttribute="bottom" id="KPt-Fq-O2F"/>
-                            <constraint firstAttribute="trailing" secondItem="CRu-mM-1LU" secondAttribute="trailing" id="Ml2-5W-RaL"/>
+                            <constraint firstItem="DTo-v6-vzd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="5jS-Yn-cLy"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fZK-9D-emK" secondAttribute="bottom" id="8Xa-7F-YtC"/>
+                            <constraint firstItem="fZK-9D-emK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="BFf-xm-6AQ"/>
+                            <constraint firstItem="fZK-9D-emK" firstAttribute="top" secondItem="DTo-v6-vzd" secondAttribute="bottom" id="FNN-Vy-1IS"/>
+                            <constraint firstAttribute="trailing" secondItem="fZK-9D-emK" secondAttribute="trailing" id="NnE-gf-m19"/>
+                            <constraint firstAttribute="trailing" secondItem="DTo-v6-vzd" secondAttribute="trailing" id="SNL-K0-mcH"/>
+                            <constraint firstItem="DTo-v6-vzd" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="oNd-ab-WJR"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="showLabel" destination="CRu-mM-1LU" id="rM7-q6-qjx"/>
+                        <outlet property="fpsLabel" destination="DTo-v6-vzd" id="mHE-e1-Gi9"/>
+                        <outlet property="tableView" destination="fZK-9D-emK" id="hzV-KQ-KzN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
